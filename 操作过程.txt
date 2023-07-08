@@ -1,0 +1,58 @@
+create user 'slave'@'%' identified by "1qaz@WSX"; 
+
+从机操作
+change master to master_host='192.168.3.149',master_user='slave',master_password='1qaz@WSX'  ,MASTER_LOG_FILE='mysql-bin.000001',MASTER_LOG_POS=150983962;
+
+
+双主从配置
+https://blog.csdn.net/a360284634/article/details/89892028
+149
+CREATE USER 'slavebakuser'@'%'  IDENTIFIED BY '1qaz@WSX';
+
+grant replication slave on *.* to slavebakuser@'%' identified by '1qaz@WSX';
+
+148
+验证：mysql -h192.168.3.149 -u slavebakuser -p
+在148 配置 149 的主库信息
+change master to master_host='192.168.3.149',master_user='slavebakuser',master_password='1qaz@WSX'  ,MASTER_LOG_FILE='mysql-bin.000003',MASTER_LOG_POS=1289;
+---------------------------------------------------------------------------------------------------------
+创建第二个主从机
+148
+CREATE USER 'slavebakuser'@'%'  IDENTIFIED BY '1qaz@WSX';
+
+
+grant replication slave on *.* to slavebakuser@'%' identified by '1qaz@WSX';
+
+在149上验证
+mysql -h192.168.3.148 -u slavebakuser -p
+root账户登录myslq
+change master to master_host='192.168.3.148',master_user='slavebakuser',master_password='1qaz@WSX'  ,MASTER_LOG_FILE='mysql-bin.000002',MASTER_LOG_POS=850;
+start slave;
+show slave status\G
+148
+show slave status\G
+
+keepalived 安装
+
+yum -y install gcc openssl-devel popt-devel psmisc
+
+wget https://www.keepalived.org/software/keepalived-2.2.7.tar.gz
+
+
+[root@128 keepalived-2.2.7]# mkdir /etc/keepalived
+[root@128 keepalived-2.2.7]# cp keepalived/etc/keepalived/keepalived.conf.sample /etc/keepalived/keepalived.conf
+[root@128 keepalived-2.2.7]# cp keepalived/etc/init.d/keepalived /etc/init.d/
+[root@128 keepalived-2.2.7]# cp keepalived/etc/sysconfig/keepalived /etc/sysconfig/
+[root@128 keepalived-2.2.7]# cp bin/keepalived /usr/sbin/
+
+/etc/keepalived/shutdown.sh
+
+3.130
+ifcfg-enp0s3
+
+mysql -uslavebakuser -p1qaz@WSX -P3306 -h192.168.3.130 -e "show variables like 'server_id'";
+
+http://192.168.3.149:1080//haproxyadmin?stats#mysql_server/mysql1
+
+/var/log/messages
+
